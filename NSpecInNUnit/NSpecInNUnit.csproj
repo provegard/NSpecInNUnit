@@ -50,7 +50,6 @@
   <ItemGroup>
     <Compile Include="a_spec.cs" />
     <Compile Include="NUnitNSpec.cs" />
-    <Compile Include="DebuggerShim.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
