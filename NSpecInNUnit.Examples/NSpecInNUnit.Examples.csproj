@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0B15C639-C313-40D7-91C8-F1630849E577}</ProjectGuid>
+    <ProjectGuid>{20F02D40-1E71-4A33-8F6D-706EE48DA2A1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NSpecInNUnit</RootNamespace>
-    <AssemblyName>NSpecInNUnit</AssemblyName>
+    <RootNamespace>NSpecInNUnit.Examples</RootNamespace>
+    <AssemblyName>NSpecInNUnit.Examples</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -48,8 +48,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="NUnitNSpec.cs" />
+    <Compile Include="a_spec.cs" />
+    <Compile Include="cover.cs" />
+    <Compile Include="DebuggerShim.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NSpecInNUnit\NSpecInNUnit.csproj">
+      <Project>{0b15c639-c313-40d7-91c8-f1630849e577}</Project>
+      <Name>NSpecInNUnit</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

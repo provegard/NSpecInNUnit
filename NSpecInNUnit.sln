@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NSpecInNUnit", "NSpecInNUnit\NSpecInNUnit.csproj", "{0B15C639-C313-40D7-91C8-F1630849E577}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NSpecInNUnit.Examples", "NSpecInNUnit.Examples\NSpecInNUnit.Examples.csproj", "{20F02D40-1E71-4A33-8F6D-706EE48DA2A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{0B15C639-C313-40D7-91C8-F1630849E577}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B15C639-C313-40D7-91C8-F1630849E577}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B15C639-C313-40D7-91C8-F1630849E577}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20F02D40-1E71-4A33-8F6D-706EE48DA2A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20F02D40-1E71-4A33-8F6D-706EE48DA2A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20F02D40-1E71-4A33-8F6D-706EE48DA2A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20F02D40-1E71-4A33-8F6D-706EE48DA2A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
