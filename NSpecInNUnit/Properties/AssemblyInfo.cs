@@ -6,13 +6,9 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("NSpecInNUnit")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyDescription("A base class for running NSpec examples in an NUnit context.")]
 [assembly: AssemblyProduct("NSpecInNUnit")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+[assembly: AssemblyCopyright("Copyright ©  2016-2017 Per Rovegård")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
