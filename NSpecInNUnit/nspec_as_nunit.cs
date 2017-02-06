@@ -13,7 +13,7 @@ namespace NSpecInNUnit
     /// Base class for NSpec-based tests. This class allows us to run tests in Visual Studio using
     /// ReSharper as well as from the console using the NUnit runner.
     /// </summary>
-    public abstract class NUnitNSpec : nspec
+    public abstract class nspec_as_nunit : nspec
     {
         private bool _hasRun;
 

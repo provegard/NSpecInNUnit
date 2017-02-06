@@ -2,7 +2,7 @@
 
 namespace NSpecInNUnit
 {
-    public class a_spec : NUnitNSpec
+    public class a_spec : nspec_as_nunit
     {
         public void describe_stuff()
         {

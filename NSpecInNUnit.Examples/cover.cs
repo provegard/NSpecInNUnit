@@ -4,7 +4,7 @@ namespace NSpecInNUnit
 {
     // Run tests with something like DotCover (https://www.jetbrains.com/dotcover/)
     // Target.Sub shouldn't be covered, the other should be.
-    public class cover : NUnitNSpec
+    public class cover : nspec_as_nunit
     {
         public void describe_Target()
         {
