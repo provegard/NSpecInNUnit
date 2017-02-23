@@ -10,7 +10,7 @@
     <projectUrl>https://github.com/provegard/NSpecInNUnit</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Contains a base class for running NSpec examples in an NUnit context. Works in Visual Studio and with the NUnit console runner.</description>
-    <releaseNotes>Support for NSpec 2.1.0 and target .NET framework 4.5.2.</releaseNotes>
+    <releaseNotes>Support for NUnit 3, NSpec 2.1.0 and target .NET framework 4.5.2.</releaseNotes>
     <copyright>Copyright (c) 2016-2017 Per Rovegård</copyright>
     <tags>nspec nunit</tags>
   </metadata>

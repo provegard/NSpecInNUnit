@@ -14,13 +14,14 @@ namespace NSpecInNUnit
     /// Base class for NSpec-based tests. This class allows us to run tests in Visual Studio using
     /// ReSharper as well as from the console using the NUnit runner.
     /// </summary>
-    public abstract class nspec_as_nunit : nspec
+    public abstract class nspec_as_nunit<T> : nspec
+        where T : nspec_as_nunit<T>
     {
         private bool _hasRun;
 
-        public IEnumerable Examples()
+        public static IEnumerable Examples()
         {
-            var currentSpec = GetType();
+            var currentSpec = typeof (T);
             var finder = new SpecFinder(new[] { currentSpec });
             var tagsFilter = new Tags().Parse(currentSpec.Name);
             var builder = new ContextBuilder(finder, tagsFilter, new DefaultConventions());
@@ -93,7 +94,7 @@ namespace NSpecInNUnit
         public NUnitTestFromExample(Tags tagsFilter, ContextCollection testSuite, ExampleBase example)
             : base(new ExampleContext(tagsFilter, testSuite, example))
         {
-            if (example.Pending) Ignore();
+            if (example.Pending) Ignore("Ignored");
             SetName(example.FullName());
         }
     }

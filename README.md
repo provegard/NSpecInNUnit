@@ -17,7 +17,7 @@ Once installed, it's a matter of using the base class:
     using NSpec;
     using NSpecInNUnit;
 
-    public class my_examples : nspec_as_nunit {
+    public class my_examples : nspec_as_nunit<my_examples> {
 
       public void describe_the_examples() {
         it["should work"] = () => 1.should_be(1);
@@ -25,15 +25,24 @@ Once installed, it's a matter of using the base class:
 
     }
 
+Note that the base class is a generic class that has to be parameterized with the examples
+class. This is required because of how NUnit 3 works.
+
 For more information about NSpec, please visit http://nspec.org/.
 
 ## Limitations
 
-* Only works with NUnit 2
+* Only works with NUnit 3.
+* For NUnit 2 support, please use NSpecInNUnit 2.0.1.
+* For NSpec 1 support, please use NSpecInNUnit 1.0.1.
 * All examples are run together. Running a single test (e.g. via ReSharper) only affects
   the test reporting.
 
 ## Changelog
+
+### 3.0.0.0 (2017-02-23)
+
+* Now depends on NUnit 3.6.0.
 
 ### 2.0.1.0 (2017-02-23)
 
