@@ -33,6 +33,13 @@ For more information about NSpec, please visit http://nspec.org/.
 * All examples are run together. Running a single test (e.g. via ReSharper) only affects
   the test reporting.
 
+## Changelog
+
+
+### 0.1.0 (2017-02-06)
+
+* First version, works with NSpec 1 and NUnit 2.
+
 ## License
 
 The code is licensed under the MIT license. See https://per.mit-license.org/2016
