@@ -35,6 +35,10 @@ For more information about NSpec, please visit http://nspec.org/.
 
 ## Changelog
 
+### 2.0.0.0 (2017-02-23)
+
+* Target .NET 4.5.2.
+* Use NSpec 2.1.0.
 
 ### 1.0.1.0 (2017-02-23)
 
