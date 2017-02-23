@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>NSpecInNUnit</id>
-    <version>1.0.0.0</version>
+    <version>$version$</version>
     <title>A base class for running NSpec examples in an NUnit context.</title>
     <authors>provegard</authors>
     <owners>provegard</owners>
