@@ -36,13 +36,13 @@ For more information about NSpec, please visit http://nspec.org/.
 ## Changelog
 
 
-### 0.1.0 (2017-02-23)
+### 1.0.1.0 (2017-02-23)
 
 * Target .NET 4.5, because one reason to stick to NSpec 1 is because you need to
   use .NET 4.5 or 4.5.1, so it makes sense that NSpecInNUnit doesn't have a
   requirement on a newer version.
 
-### 0.1.0 (2017-02-06)
+### 1.0.0.0 (2017-02-06)
 
 * First version, works with NSpec 1 and NUnit 2.
 
