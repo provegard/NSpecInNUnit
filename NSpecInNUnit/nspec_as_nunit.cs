@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using NSpec;
@@ -79,6 +80,8 @@ namespace NSpecInNUnit
         public void Write(ContextCollection contexts)
         {
         }
+
+        public IDictionary<string, string> Options { get; set; }
     }
 
     /// <summary>

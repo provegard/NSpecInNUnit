@@ -1,4 +1,4 @@
-﻿using NSpec;
+﻿using NUnit.Framework;
 
 namespace NSpecInNUnit
 {
@@ -11,8 +11,8 @@ namespace NSpecInNUnit
             Target target = null;
             beforeAll = () => target = new Target();
 
-            it["should add"] = () => target.Add(2, 3).should_be(5);
-            it["should multiply"] = () => target.Mul(2, 3).should_be(6);
+            it["should add"] = () => Assert.That(target.Add(2, 3), Is.EqualTo(5));
+            it["should multiply"] = () => Assert.That(target.Mul(2, 3), Is.EqualTo(6));
         }
     }
 

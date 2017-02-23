@@ -1,4 +1,4 @@
-﻿using NSpec;
+﻿using NUnit.Framework;
 
 namespace NSpecInNUnit
 {
@@ -10,9 +10,9 @@ namespace NSpecInNUnit
             beforeEach = () => counter++;
 
             // Note that all examples are always run, even if one is singled out using ReSharper.
-            it["should run in isolation"] = () => counter.should_be(1);
-            it["should run in isolation also"] = () => counter.should_be(2);
-            it["should run in isolation too"] = () => counter.should_be(3);
+            it["should run in isolation"] = () => Assert.That(counter, Is.EqualTo(1));
+            it["should run in isolation also"] = () => Assert.That(counter, Is.EqualTo(2));
+            it["should run in isolation too"] = () => Assert.That(counter, Is.EqualTo(3));
         }
     }
 }
