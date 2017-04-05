@@ -20,13 +20,16 @@ Once installed, it's a matter of using the base class:
     public class my_examples : nspec_as_nunit<my_examples> {
 
       public void describe_the_examples() {
-        it["should work"] = () => 1.should_be(1);
+        it["should work"] = () => Assert.That(1, Is.EqualTo(2));
       }
 
     }
 
 Note that the base class is a generic class that has to be parameterized with the examples
 class. This is required because of how NUnit 3 works.
+
+Also note that NSpec no longer ships with its own assertions (other than a few limited). You can use NUnit 
+assertions like above or install [another assertion library](http://nspec.org/#assertions).
 
 For more information about NSpec, please visit http://nspec.org/.
 
