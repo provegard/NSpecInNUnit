@@ -26,12 +26,18 @@ Once installed, it's a matter of using the base class:
     }
 
 Note that the base class is a generic class that has to be parameterized with the examples
-class. This is required because of how NUnit 3 works.
-
-Also note that NSpec no longer ships with its own assertions (other than a few limited). You can use NUnit 
-assertions like above or install [another assertion library](http://nspec.org/#assertions).
+class (here `my_examples`). This is required because of how NUnit 3 test data sources works.
 
 For more information about NSpec, please visit http://nspec.org/.
+
+## Assertions
+
+NSpec no longer ships with its own assertions (other than a few limited). You can use NUnit 
+assertions like in the example above or install [another assertion library](http://nspec.org/#assertions).
+
+&#x26a0; If you use a non-NUnit assertion library like FluentAssertions and have no NUnit Assert statements
+at all, NUnit may not detect any tests in the assembly. To fix this, add the `[TestFixture]` attribute
+to at least one of your example classes.
 
 ## Limitations
 
