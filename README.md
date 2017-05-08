@@ -1,8 +1,8 @@
 # NSpecInNUnit
 
-A repo to demonstrate running NSpec examples in a NUnit test suite.
-
-One purpose is to help demonstrate this issue: https://github.com/mattflo/NSpec/issues/114
+A small adapter between NSpec and NUnit - allows you to run NSpec examples using an NUnit runner.
+This is useful if your test infrastructure is based on NUnit but you want to migrate to NSpec, or
+if you find that good tooling doesn't have NSpec support.
 
 ## How to use
 
