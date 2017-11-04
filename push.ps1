@@ -16,6 +16,5 @@ if ($result -ne "ok") {
   throw "Aborted"
 }
 
-nuget setApiKey $apikey
-nuget push $pkg -Source https://www.nuget.org/api/v2/package
+dotnet nuget push $pkg --api-key $apiKey --source https://www.nuget.org/api/v2/package
 

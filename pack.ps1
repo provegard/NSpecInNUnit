@@ -1,2 +1,2 @@
-nuget pack NSpecInNUnit/NSpecInNUnit.csproj -Build -Properties Configuration=Release
+dotnet pack NSpecInNUnit/NSpecInNUnit.csproj --configuration Release
 
