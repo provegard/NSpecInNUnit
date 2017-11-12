@@ -41,13 +41,25 @@ to at least one of your example classes.
 
 ## Limitations
 
-* Only works with NUnit 3.
+* Only works with NUnit 3.7 and later (due to [this bug](https://github.com/nunit/nunit/issues/2052)).
+* Only works with NSpec 3.0.3 and later (due to .NET Core support)
 * For NUnit 2 support, please use NSpecInNUnit 2.0.1.
 * For NSpec 1 support, please use NSpecInNUnit 1.0.1.
 * All examples are run together. Running a single test (e.g. via ReSharper) only affects
   the test reporting.
 
+## .NET Core/Standard
+
+NSpecInNUnit targets .NET Framework 4.5.2 as well as .NET Standard 1.6.
+Thanks to David Vedvick (@danrien) for making the required changes!
+
 ## Changelog
+
+### 3.1.0.0 (2017-11-12)
+
+* Targets both .NET Framework 4.5.2 and .NET Standard 1.6.
+* Now depends on NUnit 3.7.0.
+* Now depends on NSpec 3.0.3.
 
 ### 3.0.0.0 (2017-02-23)
 
