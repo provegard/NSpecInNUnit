@@ -51,7 +51,7 @@ to at least one of your example classes.
 ## .NET Core/Standard
 
 NSpecInNUnit targets .NET Framework 4.5.2 as well as .NET Standard 1.6.
-Thanks to David Vedvick (@danrien) for making the required changes!
+Thanks to [David Vedvick](https://github.com/danrien) for making the required changes!
 
 ## Changelog
 
