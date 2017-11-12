@@ -38,7 +38,7 @@ namespace NSpecInNUnit
             {
                 // Generate a fake example that represents the setup failure.
                 var example = new Example("Test setup failure");
-                example.AddTo(new Context("test failure")); // for Example.FullName() to work
+                example.Context = new Context("test failure"); // for Example.FullName() to work
                 example.Exception = ex;
                 example.HasRun = true;
                 return new object[] { new NUnitTestFromExample(tagsFilter, null, example) };
