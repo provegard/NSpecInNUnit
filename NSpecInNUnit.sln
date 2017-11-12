@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2006
+VisualStudioVersion = 15.0.26730.10
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NSpecInNUnit", "NSpecInNUnit\NSpecInNUnit.csproj", "{574D6DE3-2F59-42D7-A970-F7BCADC00951}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NSpecInNUnit", "NSpecInNUnit\NSpecInNUnit.csproj", "{574D6DE3-2F59-42D7-A970-F7BCADC00951}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NSpecInNUnit.Examples", "NSpecInNUnit.Examples\NSpecInNUnit.Examples.csproj", "{1F18D2F0-C511-43C0-BF12-E70854699B39}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NSpecInNUnit.Examples", "NSpecInNUnit.Examples\NSpecInNUnit.Examples.csproj", "{1F18D2F0-C511-43C0-BF12-E70854699B39}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NSpecInNUnit.Examples.452", "NSpecInNUnit.Examples.452\NSpecInNUnit.Examples.452.csproj", "{1F08E946-3BC5-403A-84DA-417524A86AE2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{1F18D2F0-C511-43C0-BF12-E70854699B39}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F18D2F0-C511-43C0-BF12-E70854699B39}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F18D2F0-C511-43C0-BF12-E70854699B39}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F08E946-3BC5-403A-84DA-417524A86AE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F08E946-3BC5-403A-84DA-417524A86AE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F08E946-3BC5-403A-84DA-417524A86AE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F08E946-3BC5-403A-84DA-417524A86AE2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
