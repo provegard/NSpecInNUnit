@@ -1,14 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.6</TargetFramework>
+    <TargetFrameworks>netstandard1.6;net452</TargetFrameworks>
     <AssemblyTitle>NSpecInNUnit</AssemblyTitle>
     <Copyright>Copyright ©  2016-2017 Per Rovegård</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="nspec" Version="3.1.0" />
-    <PackageReference Include="NUnit" Version="3.8.1" />
+    <PackageReference Include="NUnit" Version="3.7.0" />
   </ItemGroup>
 
   <ItemGroup>
