@@ -3,7 +3,7 @@ param (
   [string]$apikey
 )
 
-$items = (get-item *.nupkg)
+$items = (get-childitem  .\NSpecInNUnit\bin\Release -recurse *.nupkg)
 if ($items.Count -ne 1) {
   throw "Expected exactly 1 nupkg file"
 }
