@@ -3,7 +3,11 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.6;net452</TargetFrameworks>
     <AssemblyTitle>NSpecInNUnit</AssemblyTitle>
+    <Product>NSpecInNUnit</Product>
+    <Description>A base class for running NSpec examples in an NUnit context.</Description>
     <Copyright>Copyright ©  2016-2017 Per Rovegård</Copyright>
+    <VersionPrefix>3.1.0</VersionPrefix>
+    <VersionSuffix></VersionSuffix>
   </PropertyGroup>
 
   <ItemGroup>

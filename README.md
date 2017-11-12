@@ -55,7 +55,7 @@ Thanks to [David Vedvick](https://github.com/danrien) for making the required ch
 
 ## Changelog
 
-### 3.1.0.0 (2017-11-12)
+### 3.1.0 (2017-11-12)
 
 * Targets both .NET Framework 4.5.2 and .NET Standard 1.6.
 * Now depends on NUnit 3.7.0.
