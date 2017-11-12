@@ -8,7 +8,7 @@ if ($items.Count -ne 1) {
   throw "Expected exactly 1 nupkg file"
 }
 
-$pkg = $items[0]
+$pkg = $items[0].FullName
 
 write-host "Will push $pkg using API key $apikey"
 $result = (read-host "Type 'ok' to continue")
