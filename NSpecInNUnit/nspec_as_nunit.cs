@@ -37,10 +37,11 @@ namespace NSpecInNUnit
             catch (Exception ex)
             {
                 // Generate a fake example that represents the setup failure.
+                var context = new Context("test failure"); // for Example.FullName() to work
                 var example = new Example("Test setup failure");
-                example.Context = new Context("test failure"); // for Example.FullName() to work
                 example.Exception = ex;
                 example.HasRun = true;
+                example.AddTo(context);
                 return new object[] { new NUnitTestFromExample(tagsFilter, null, example) };
             }
         }
