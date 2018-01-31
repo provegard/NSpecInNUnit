@@ -55,6 +55,11 @@ Thanks to [David Vedvick](https://github.com/danrien) for making the required ch
 
 ## Changelog
 
+### 3.2.0 (2018-01-31)
+
+* Now depends on NUnit 3.9.0.
+* Now depends on NSpec 3.1.0 (required since 3.1.0 is not binary compatible with 3.0.7).
+
 ### 3.1.0 (2017-11-12)
 
 * Targets both .NET Framework 4.5.2 and .NET Standard 1.6.
