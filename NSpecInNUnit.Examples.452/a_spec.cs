@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace NSpecInNUnit
+namespace NSpecInNUnit.Examples._452
 {
     public class a_spec : nspec_as_nunit<a_spec>
     {

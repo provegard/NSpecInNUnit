@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace NSpecInNUnit
+namespace NSpecInNUnit.Examples
 {
     // Run tests with something like DotCover (https://www.jetbrains.com/dotcover/)
     // Target.Sub shouldn't be covered, the other should be.
