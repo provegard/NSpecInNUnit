@@ -55,6 +55,10 @@ Thanks to [David Vedvick](https://github.com/danrien) for making the required ch
 
 ## Changelog
 
+### Unreleased
+
+* Capture console output (issue #10).
+
 ### 3.2.0 (2018-01-31)
 
 * Now depends on NUnit 3.9.0.
