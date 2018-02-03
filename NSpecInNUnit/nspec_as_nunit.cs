@@ -60,6 +60,13 @@ namespace NSpecInNUnit
             }
 
             var example = ctx.Example;
+
+            if (!string.IsNullOrEmpty(example.CapturedOutput))
+            {
+                // The output includes newlines, so use Console.Write here.
+                Console.Write(example.CapturedOutput);
+            }
+            
             if (!example.HasRun) throw new Exception("The example didn't run :-(");
             if (example.Failed())
             {
