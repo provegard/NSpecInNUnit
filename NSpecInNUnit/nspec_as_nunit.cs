@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.ExceptionServices;
+using System.Threading.Tasks;
 using NSpec;
 using NSpec.Domain;
 using NSpec.Domain.Formatters;
@@ -17,13 +19,19 @@ namespace NSpecInNUnit
     public abstract class nspec_as_nunit<T> : nspec
         where T : nspec_as_nunit<T>
     {
-        private bool _hasRun;
+        private ExampleContext _lastContext;
+        private readonly IList<Action<nspec>> _afterAllActions = new List<Action<nspec>>();
+
+        private void CollectAfterAll(Action<nspec> action)
+        {
+            _afterAllActions.Add(action);
+        }
 
         public static IEnumerable Examples()
         {
-            var currentSpec = typeof (T);
+            var currentSpec = typeof(T);
             var finder = new SpecFinder(new[] { currentSpec });
-            var tagsFilter = new Tags().Parse(currentSpec.Name);
+            var tagsFilter = new Tags();
             var builder = new ContextBuilder(finder, tagsFilter, new DefaultConventions());
             try
             {
@@ -31,8 +39,14 @@ namespace NSpecInNUnit
                 // run the examples now - setup fixtures haven't run yet, for example. But we use the result
                 // of the discovery phase to produce a number of test cases.
                 var testSuite = builder.Contexts().Build();
+                DeferAfterAlls(testSuite);
                 var examples = testSuite.SelectMany(ctx => ctx.AllExamples());
-                return examples.Select(example => new NUnitTestFromExample(tagsFilter, testSuite, example));
+                return examples.Select(example =>
+                {
+                    var id = Guid.NewGuid();
+                    example.Tags.AddRange(Tags.ParseTags(id.ToString() + " __exclude"));
+                    return new NUnitTestFromExample(tagsFilter, testSuite, example, id);
+                });
             }
             catch (Exception ex)
             {
@@ -42,30 +56,102 @@ namespace NSpecInNUnit
                 example.Exception = ex;
                 example.HasRun = true;
                 example.AddTo(context);
-                return new object[] { new NUnitTestFromExample(tagsFilter, null, example) };
+                return new object[] { new NUnitTestFromExample(tagsFilter, null, example, Guid.Empty) };
+            }
+        }
+
+        private static void DeferAfterAlls(ContextCollection testSuite)
+        {
+            var rootContext = testSuite.SingleOrDefault();
+            if (rootContext == null) throw new Exception("Failed to identify the root context");
+            DeferAfterAll(rootContext);
+        }
+
+        private static void DeferAfterAll(Context context)
+        {
+            foreach (var subContext in context.Contexts) DeferAfterAll(subContext);
+            var hook1 = context.AfterAll;
+            if (hook1 != null)
+            {
+                context.AfterAll = () =>
+                {
+                    GetThisInstance(context.GetInstance()).CollectAfterAll(_ => hook1());
+                };                
+            }
+            var hook2 = context.AfterAllInstance;
+            if (hook2 != null)
+            {
+                context.AfterAllChain.SetProtectedProperty(_ => _.ClassHook, nspec =>
+                {
+                    GetThisInstance(nspec).CollectAfterAll(hook2);
+                });
+            }
+
+            var hook3 = context.AfterAllInstanceAsync;
+            if (hook3 != null)
+            {
+                context.AfterAllChain.SetProtectedProperty(_ => _.AsyncClassHook, nspec =>
+                {
+                    GetThisInstance(nspec).CollectAfterAll(hook3);
+                });                
+            }
+
+            var hook4 = context.AfterAllAsync;
+            if (hook4 != null)
+            {
+                context.AfterAllAsync = () =>
+                {
+                    GetThisInstance(context.GetInstance()).CollectAfterAll(_ => hook4().Wait());
+                    return Task.Delay(0);
+                };
+            }
+        }
+
+        private static nspec_as_nunit<T> GetThisInstance(object instance)
+        {
+            if (!(instance is nspec_as_nunit<T> ret))
+                throw new Exception($"Instance {instance} is not of type nspec_as_nunit<{typeof(T).Name}>");
+            return ret;
+        }
+
+        [OneTimeTearDown]
+        public void RunAfterAlls()
+        {
+            if (_lastContext?.TestSuite == null) return;
+            var nspecInstance = _lastContext.TestSuite.First().GetInstance(); //TODO fix ugly
+            var thisInstance = GetThisInstance(nspecInstance);
+            foreach (var action in thisInstance._afterAllActions)
+            {
+                action(nspecInstance);
             }
         }
 
         [TestCaseSource(nameof(Examples))]
         public void RealizeSpec(ExampleContext ctx)
         {
-            // If we haven't run the examples yet, do so now. TestSuite is null in case of setup failure. All
-            // my attempts to run examples individually have failed (e.g. due to nested contexts or the use of
-            // beforeAll), so run everything and use the individual test cases only for reporting.
-            if (!_hasRun && ctx.TestSuite != null)
+            // Save for OneTimeTearDown
+            _lastContext = ctx;
+
+            //TODO: Instance lock here! How will that work with one instance per test??
+            // TestSuite is null in the setup error case
+            if (ctx.TestSuite != null)
             {
-                _hasRun = true;
-                var runner = new ContextRunner(ctx.TagsFilter, new NoopFormatter(), false);
-                runner.Run(ctx.TestSuite);
+                var tagsFilter = ctx.TagsFilter;
+                tagsFilter.IncludeTags.Add(ctx.TestId.ToString());
+                try
+                {
+                    var runner = new ContextRunner(tagsFilter, new NoopFormatter(), false);
+                    runner.Run(ctx.TestSuite);
+                }
+                finally
+                {
+                    tagsFilter.IncludeTags.Remove(ctx.TestId.ToString());
+                }
             }
 
             var example = ctx.Example;
 
-            if (!string.IsNullOrEmpty(example.CapturedOutput))
-            {
-                // The output includes newlines, so use Console.Write here.
-                Console.Write(example.CapturedOutput);
-            }
+            WriteCapturedOutput(example);
             
             if (!example.HasRun) throw new Exception("The example didn't run :-(");
             if (example.Failed())
@@ -77,6 +163,26 @@ namespace NSpecInNUnit
                     edi.Throw();
                 }
                 throw new Exception("The example failed, but I don't know why :-(");
+            }
+        }
+
+        private void WriteCapturedOutput(ExampleBase example)
+        {
+            WriteCapturedOutput(example.Context);
+            if (!string.IsNullOrEmpty(example.CapturedOutput))
+            {
+                // The output includes newlines, so use Console.Write here.
+                Console.Write(example.CapturedOutput);
+            }
+        }
+
+        private void WriteCapturedOutput(Context context)
+        {
+            var parent = context.Parent;
+            if (parent != null) WriteCapturedOutput(parent);
+            if (!string.IsNullOrEmpty(context.CapturedOutput))
+            {
+                Console.Write(context.CapturedOutput);
             }
         }
     }
@@ -99,8 +205,8 @@ namespace NSpecInNUnit
     /// </summary>
     public class NUnitTestFromExample : TestCaseData
     {
-        public NUnitTestFromExample(Tags tagsFilter, ContextCollection testSuite, ExampleBase example)
-            : base(new ExampleContext(tagsFilter, testSuite, example))
+        public NUnitTestFromExample(Tags tagsFilter, ContextCollection testSuite, ExampleBase example, Guid testId)
+            : base(new ExampleContext(tagsFilter, testSuite, example, testId))
         {
             if (example.Pending) Ignore("Ignored");
             SetName(example.FullName());
@@ -116,12 +222,14 @@ namespace NSpecInNUnit
         public Tags TagsFilter { get; }
         public ContextCollection TestSuite { get; }
         public ExampleBase Example { get; }
+        public Guid TestId { get; } //TODO: String instead
 
-        public ExampleContext(Tags tagsFilter, ContextCollection testSuite, ExampleBase example)
+        public ExampleContext(Tags tagsFilter, ContextCollection testSuite, ExampleBase example, Guid TestId)
         {
             TagsFilter = tagsFilter;
             TestSuite = testSuite;
             Example = example;
+            this.TestId = TestId;
         }
     }
 }

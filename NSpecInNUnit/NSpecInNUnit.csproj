@@ -1,5 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard1.6;net452</TargetFrameworks>
     <AssemblyTitle>NSpecInNUnit</AssemblyTitle>
@@ -7,19 +6,17 @@
     <Description>A base class for running NSpec examples in an NUnit context.</Description>
     <Copyright>Copyright ©  2016-2018 Per Rovegård</Copyright>
     <VersionPrefix>3.2.0</VersionPrefix>
-    <VersionSuffix></VersionSuffix>
+    <VersionSuffix>
+    </VersionSuffix>
     <Version>3.2.0</Version>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="nspec" Version="3.1.0" />
     <PackageReference Include="NUnit" Version="3.9.0" />
   </ItemGroup>
-
   <ItemGroup>
     <None Include="NSpecInNUnit.nuspec">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
-
 </Project>
