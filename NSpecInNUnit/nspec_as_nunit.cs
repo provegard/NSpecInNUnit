@@ -7,7 +7,6 @@ using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using NSpec;
 using NSpec.Domain;
-using NSpec.Domain.Formatters;
 using NUnit.Framework;
 
 namespace NSpecInNUnit
@@ -184,52 +183,6 @@ namespace NSpecInNUnit
             {
                 Console.Write(context.CapturedOutput);
             }
-        }
-    }
-
-    /// <summary>
-    /// An NSpec formatter that doesn't do anything.
-    /// </summary>
-    public class NoopFormatter : IFormatter
-    {
-        public void Write(ContextCollection contexts)
-        {
-        }
-
-        public IDictionary<string, string> Options { get; set; }
-    }
-
-    /// <summary>
-    /// An NUnit wrapper for NSpec information that at the same time acts as a single test case from a
-    /// test case source.
-    /// </summary>
-    public class NUnitTestFromExample : TestCaseData
-    {
-        public NUnitTestFromExample(Tags tagsFilter, ContextCollection testSuite, ExampleBase example, Guid testId)
-            : base(new ExampleContext(tagsFilter, testSuite, example, testId))
-        {
-            if (example.Pending) Ignore("Ignored");
-            SetName(example.FullName());
-        }
-    }
-
-    /// <summary>
-    /// Contains an NSpec example instance toghether with contextual information (instances) necessary
-    /// to run the example.
-    /// </summary>
-    public class ExampleContext
-    {
-        public Tags TagsFilter { get; }
-        public ContextCollection TestSuite { get; }
-        public ExampleBase Example { get; }
-        public Guid TestId { get; } //TODO: String instead
-
-        public ExampleContext(Tags tagsFilter, ContextCollection testSuite, ExampleBase example, Guid TestId)
-        {
-            TagsFilter = tagsFilter;
-            TestSuite = testSuite;
-            Example = example;
-            this.TestId = TestId;
         }
     }
 }
