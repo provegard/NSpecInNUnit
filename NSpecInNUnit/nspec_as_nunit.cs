@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Runtime.ExceptionServices;
-using System.Threading.Tasks;
 using NSpec;
 using NSpec.Domain;
 using NSpec.Domain.Formatters;
@@ -19,13 +17,17 @@ namespace NSpecInNUnit
     public abstract class nspec_as_nunit<T> : nspec
         where T : nspec_as_nunit<T>
     {
+        // Tracks the last executed context, for running after-all actions in OneTimeTearDown.
+        // This member belongs to the NUnit-created instance of this class.
         private ExampleContext _lastContext;
-        private readonly IList<Action<nspec>> _afterAllActions = new List<Action<nspec>>();
-        private bool _hasCollectedAfterAll;
+        
+        // List of after-all actions to run in OneTimeTearDown. The list belongs to the NSpec-created instance
+        // of this class, not the NUnit-created instance.
+        private IList<Action<nspec>> _afterAllActions;
 
         private void CollectAfterAll(Action<nspec> action)
         {
-            if (_hasCollectedAfterAll) return;
+            if (_afterAllActions == null) _afterAllActions = new List<Action<nspec>>();
             _afterAllActions.Add(action);
         }
         
@@ -41,13 +43,20 @@ namespace NSpecInNUnit
                 // run the examples now - setup fixtures haven't run yet, for example. But we use the result
                 // of the discovery phase to produce a number of test cases.
                 var testSuite = builder.Contexts().Build();
-                PatchBeforeAllsToRunOnce(testSuite);
-                DeferAfterAlls(testSuite);
+                
+                ContextCollectionUtil.PatchBeforeAllsToRunOnce(testSuite);
+                var thisInstance = GetThisInstance(testSuite);
+                ContextCollectionUtil.DeferAfterAlls(testSuite, a =>
+                {
+                    thisInstance.CollectAfterAll(a);
+                });
+                
                 var examples = testSuite.SelectMany(ctx => ctx.AllExamples());
                 return examples.Select(example =>
                 {
+                    // Add an example-specific ID so that we can run examples one by one later on.
                     var id = Guid.NewGuid();
-                    example.Tags.AddRange(Tags.ParseTags(id.ToString() + " __exclude"));
+                    example.Tags.AddRange(Tags.ParseTags(id.ToString()));
                     return new NUnitTestFromExample(tagsFilter, testSuite, example, id);
                 });
             }
@@ -63,112 +72,6 @@ namespace NSpecInNUnit
             }
         }
 
-        private static void DeferAfterAlls(ContextCollection testSuite)
-        {
-            var rootContext = testSuite.SingleOrDefault();
-            if (rootContext == null) throw new Exception("Failed to identify the root context");
-            DeferAfterAll(rootContext);
-        }
-        
-        private static void PatchBeforeAllsToRunOnce(ContextCollection testSuite)
-        {
-            var rootContext = testSuite.SingleOrDefault();
-            if (rootContext == null) throw new Exception("Failed to identify the root context");
-            PatchBeforeAllsToRunOnce(rootContext);
-        }
-
-        private static void PatchBeforeAllsToRunOnce(Context context)
-        {
-            foreach (var subContext in context.Contexts) PatchBeforeAllsToRunOnce(subContext);
-            var hook1 = context.BeforeAll;
-            if (hook1 != null)
-            {
-                context.BeforeAll = InvokeOnce(hook1);
-            }
-            var hook2 = context.BeforeAllInstance;
-            if (hook2 != null)
-            {
-                context.BeforeAllChain.SetProtectedProperty(_ => _.ClassHook, InvokeOnce(hook2));
-            }
-            var hook3 = context.BeforeAllInstanceAsync;
-            if (hook3 != null)
-            {
-                context.BeforeAllChain.SetProtectedProperty(_ => _.AsyncClassHook, InvokeOnce(hook3));
-            }
-            var hook4 = context.BeforeAllAsync;
-            if (hook4 != null)
-            {
-                var hasRun = false;
-                context.BeforeAllAsync = () =>
-                {
-                    if (hasRun) return Task.Delay(0);
-                    hasRun = true;
-                    return hook4();
-                };
-            }
-        }
-
-        private static Action<nspec> InvokeOnce(Action<nspec> a)
-        {
-            var hasRun = false;
-            return nspec =>
-            {
-                if (hasRun) return;
-                hasRun = true;
-                a(nspec);
-            };
-        }
-        private static Action InvokeOnce(Action a)
-        {
-            var hasRun = false;
-            return () =>
-            {
-                if (hasRun) return;
-                hasRun = true;
-                a();
-            };
-        }
-
-        private static void DeferAfterAll(Context context)
-        {
-            foreach (var subContext in context.Contexts) DeferAfterAll(subContext);
-            var hook1 = context.AfterAll;
-            if (hook1 != null)
-            {
-                context.AfterAll = () =>
-                {
-                    GetThisInstance(context.GetInstance()).CollectAfterAll(_ => hook1());
-                };                
-            }
-            var hook2 = context.AfterAllInstance;
-            if (hook2 != null)
-            {
-                context.AfterAllChain.SetProtectedProperty(_ => _.ClassHook, nspec =>
-                {
-                    GetThisInstance(nspec).CollectAfterAll(hook2);
-                });
-            }
-
-            var hook3 = context.AfterAllInstanceAsync;
-            if (hook3 != null)
-            {
-                context.AfterAllChain.SetProtectedProperty(_ => _.AsyncClassHook, nspec =>
-                {
-                    GetThisInstance(nspec).CollectAfterAll(hook3);
-                });                
-            }
-
-            var hook4 = context.AfterAllAsync;
-            if (hook4 != null)
-            {
-                context.AfterAllAsync = () =>
-                {
-                    GetThisInstance(context.GetInstance()).CollectAfterAll(_ => hook4().Wait());
-                    return Task.Delay(0);
-                };
-            }
-        }
-
         private static nspec_as_nunit<T> GetThisInstance(object instance)
         {
             if (!(instance is nspec_as_nunit<T> ret))
@@ -176,15 +79,24 @@ namespace NSpecInNUnit
             return ret;
         }
 
+        private static nspec_as_nunit<T> GetThisInstance(ContextCollection testSuite)
+        {
+            var nspecInstance = testSuite.First().GetInstance(); //TODO fix ugly
+            return GetThisInstance(nspecInstance);
+        }
+
         [OneTimeTearDown]
         public void RunAfterAlls()
         {
             if (_lastContext?.TestSuite == null) return;
-            var nspecInstance = _lastContext.TestSuite.First().GetInstance(); //TODO fix ugly
-            var thisInstance = GetThisInstance(nspecInstance);
-            foreach (var action in thisInstance._afterAllActions)
+
+            var thisInstance = GetThisInstance(_lastContext.TestSuite);
+            if (thisInstance._afterAllActions != null)
             {
-                action(nspecInstance);
+                foreach (var action in thisInstance._afterAllActions)
+                {
+                    action(thisInstance);
+                }
             }
         }
         
@@ -205,11 +117,6 @@ namespace NSpecInNUnit
                     // Run the suite directly as opposed via ContextRunner since the latter trims contexts
                     // and examples which is undesirable given that we make multiple runs.
                     ctx.TestSuite.Run(new SilentLiveFormatter(), false);
-
-                    var nspecInstance = _lastContext.TestSuite.First().GetInstance(); //TODO fix ugly
-                    var thiInstance = GetThisInstance(nspecInstance);
-                    // All after-alls should have been collected now.
-                    thiInstance._hasCollectedAfterAll = true;
                 }
                 finally
                 {
