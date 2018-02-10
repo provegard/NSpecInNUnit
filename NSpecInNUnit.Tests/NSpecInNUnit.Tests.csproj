@@ -55,13 +55,18 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Examples\ExamplesInMultipleContexts.cs" />
     <Compile Include="Examples\MultipleExamples.cs" />
     <Compile Include="Examples\MultipleExamplesWithAfterAll.cs" />
     <Compile Include="Examples\MultipleExamplesWithAfterAllInBlock.cs" />
     <Compile Include="Examples\MultipleExamplesWithAsyncAfterAll.cs" />
     <Compile Include="Examples\MultipleExamplesWithAsyncAfterAllInBlock.cs" />
+    <Compile Include="Examples\MultipleExamplesWithAsyncBeforeAll.cs" />
+    <Compile Include="Examples\MultipleExamplesWithAsyncBeforeAllInBlock.cs" />
     <Compile Include="Examples\MultipleExamplesWithBeforeAll.cs" />
+    <Compile Include="Examples\MultipleExamplesWithBeforeAllInBlock.cs" />
     <Compile Include="Examples\MultipleExamplesWithBeforeEach.cs" />
+    <Compile Include="Examples\MultipleExamplesWithNestedAfterAll.cs" />
     <Compile Include="Examples\SingleExample.cs" />
     <Compile Include="Examples\SingleExampleWithBeforeEach.cs" />
     <Compile Include="Examples\SingleNestedExampleWithBeforeEachs.cs" />

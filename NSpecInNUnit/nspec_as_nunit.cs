@@ -7,6 +7,7 @@ using System.Runtime.ExceptionServices;
 using System.Threading.Tasks;
 using NSpec;
 using NSpec.Domain;
+using NSpec.Domain.Formatters;
 using NUnit.Framework;
 
 namespace NSpecInNUnit
@@ -20,12 +21,14 @@ namespace NSpecInNUnit
     {
         private ExampleContext _lastContext;
         private readonly IList<Action<nspec>> _afterAllActions = new List<Action<nspec>>();
+        private bool _hasCollectedAfterAll;
 
         private void CollectAfterAll(Action<nspec> action)
         {
+            if (_hasCollectedAfterAll) return;
             _afterAllActions.Add(action);
         }
-
+        
         public static IEnumerable Examples()
         {
             var currentSpec = typeof(T);
@@ -38,6 +41,7 @@ namespace NSpecInNUnit
                 // run the examples now - setup fixtures haven't run yet, for example. But we use the result
                 // of the discovery phase to produce a number of test cases.
                 var testSuite = builder.Contexts().Build();
+                PatchBeforeAllsToRunOnce(testSuite);
                 DeferAfterAlls(testSuite);
                 var examples = testSuite.SelectMany(ctx => ctx.AllExamples());
                 return examples.Select(example =>
@@ -64,6 +68,65 @@ namespace NSpecInNUnit
             var rootContext = testSuite.SingleOrDefault();
             if (rootContext == null) throw new Exception("Failed to identify the root context");
             DeferAfterAll(rootContext);
+        }
+        
+        private static void PatchBeforeAllsToRunOnce(ContextCollection testSuite)
+        {
+            var rootContext = testSuite.SingleOrDefault();
+            if (rootContext == null) throw new Exception("Failed to identify the root context");
+            PatchBeforeAllsToRunOnce(rootContext);
+        }
+
+        private static void PatchBeforeAllsToRunOnce(Context context)
+        {
+            foreach (var subContext in context.Contexts) PatchBeforeAllsToRunOnce(subContext);
+            var hook1 = context.BeforeAll;
+            if (hook1 != null)
+            {
+                context.BeforeAll = InvokeOnce(hook1);
+            }
+            var hook2 = context.BeforeAllInstance;
+            if (hook2 != null)
+            {
+                context.BeforeAllChain.SetProtectedProperty(_ => _.ClassHook, InvokeOnce(hook2));
+            }
+            var hook3 = context.BeforeAllInstanceAsync;
+            if (hook3 != null)
+            {
+                context.BeforeAllChain.SetProtectedProperty(_ => _.AsyncClassHook, InvokeOnce(hook3));
+            }
+            var hook4 = context.BeforeAllAsync;
+            if (hook4 != null)
+            {
+                var hasRun = false;
+                context.BeforeAllAsync = () =>
+                {
+                    if (hasRun) return Task.Delay(0);
+                    hasRun = true;
+                    return hook4();
+                };
+            }
+        }
+
+        private static Action<nspec> InvokeOnce(Action<nspec> a)
+        {
+            var hasRun = false;
+            return nspec =>
+            {
+                if (hasRun) return;
+                hasRun = true;
+                a(nspec);
+            };
+        }
+        private static Action InvokeOnce(Action a)
+        {
+            var hasRun = false;
+            return () =>
+            {
+                if (hasRun) return;
+                hasRun = true;
+                a();
+            };
         }
 
         private static void DeferAfterAll(Context context)
@@ -124,7 +187,7 @@ namespace NSpecInNUnit
                 action(nspecInstance);
             }
         }
-
+        
         [TestCaseSource(nameof(Examples))]
         public void RealizeSpec(ExampleContext ctx)
         {
@@ -139,8 +202,14 @@ namespace NSpecInNUnit
                 tagsFilter.IncludeTags.Add(ctx.TestId.ToString());
                 try
                 {
-                    var runner = new ContextRunner(tagsFilter, new NoopFormatter(), false);
-                    runner.Run(ctx.TestSuite);
+                    // Run the suite directly as opposed via ContextRunner since the latter trims contexts
+                    // and examples which is undesirable given that we make multiple runs.
+                    ctx.TestSuite.Run(new SilentLiveFormatter(), false);
+
+                    var nspecInstance = _lastContext.TestSuite.First().GetInstance(); //TODO fix ugly
+                    var thiInstance = GetThisInstance(nspecInstance);
+                    // All after-alls should have been collected now.
+                    thiInstance._hasCollectedAfterAll = true;
                 }
                 finally
                 {

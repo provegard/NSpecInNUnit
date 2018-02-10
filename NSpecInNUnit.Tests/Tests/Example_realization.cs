@@ -52,6 +52,26 @@ namespace NSpecInNUnit.Tests.Tests
             var collected = Runner.CollectOuputFrom<MultipleExamplesWithBeforeAll>();
             collected.Where(c => c.Contains("beforeall")).Should().ContainSingle();
         }
+        
+        [Test]
+        public void Runs_before_all_in_block_only_once()
+        {
+            var collected = Runner.CollectOuputFrom<MultipleExamplesWithBeforeAllInBlock>();
+            collected.Where(c => c.Contains("beforeall")).Should().ContainSingle();
+        }
+                
+        [Test]
+        public void Runs_async_before_all_in_block_only_once()
+        {
+            var collected = Runner.CollectOuputFrom<MultipleExamplesWithAsyncBeforeAllInBlock>();
+            collected.Where(c => c.Contains("beforeall")).Should().ContainSingle();
+        }
+        [Test]
+        public void Runs_async_before_all_only_once()
+        {
+            var collected = Runner.CollectOuputFrom<MultipleExamplesWithAsyncBeforeAll>();
+            collected.Where(c => c.Contains("beforeall")).Should().ContainSingle();
+        }
 
         [Test]
         public void Runs_after_all_only_once()
@@ -65,6 +85,13 @@ namespace NSpecInNUnit.Tests.Tests
         {
             var collected = Runner.CollectOuputFrom<MultipleExamplesWithAfterAll>().ToList();
             collected.Should().Equal("example1", "example2", "afterall");
+        }
+        
+        [Test]
+        public void Runs_nested_after_all_in_order()
+        {
+            var collected = Runner.CollectOuputFrom<MultipleExamplesWithNestedAfterAll>().ToList();
+            collected.Should().Equal("example1", "example2", "afterall_inner", "afterall_outer");
         }
         
         [Test]
@@ -93,6 +120,13 @@ namespace NSpecInNUnit.Tests.Tests
         {
             var collected = Runner.CollectOuputFrom<SingleNestedExampleWithBeforeEachs>();
             collected.Should().Equal("outer_before", "inner_before", "example");
+        }
+
+        [Test]
+        public void Runs_examples_across_contexts()
+        {
+            var collected = Runner.CollectOuputFrom<ExamplesInMultipleContexts>();
+            collected.Should().Equal("example1", "example2", "example3");
         }
         
         //TODO:
