@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using NSpec;
@@ -105,6 +106,8 @@ namespace NSpecInNUnit
         {
             // Save for OneTimeTearDown
             _lastContext = ctx;
+
+            File.AppendAllText("c:\\temp\\cont.txt", "RealizeSpec for " + ctx.Example.Spec + Environment.NewLine);
 
             //TODO: Instance lock here! How will that work with one instance per test??
             // TestSuite is null in the setup error case
