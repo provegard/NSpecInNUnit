@@ -103,12 +103,12 @@ namespace NSpecInNUnit
             : base(new ExampleContext(tagsFilter, testSuite, example))
         {
             if (example.Pending) Ignore("Ignored");
-            SetName(example.FullName());
+            SetName(TestNamer.CreateReSharperSafeName(example));
         }
     }
 
     /// <summary>
-    /// Contains an NSpec example instance toghether with contextual information (instances) necessary
+    /// Contains an NSpec example instance together with contextual information (instances) necessary
     /// to run the example.
     /// </summary>
     public class ExampleContext
